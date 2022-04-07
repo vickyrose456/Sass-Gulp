@@ -24,7 +24,7 @@ const jsTask = (done) => {
     .pipe(gulp.dest('./hosted/'));
 
     done();
-}//js task
+};//js task
 
 const eslintTask = (done) => {
     gulp.src('./server/*.js')
@@ -33,5 +33,20 @@ const eslintTask = (done) => {
         .pipe(eslint.failAfterError());
 
         done();
-}//eslint tast
+};//eslint tast
 
+
+const watch = () => {
+    //any time theres a change, want to run the sasstask
+    gulp.watch('./scss/main.scss', sassTask);
+    gulp.watch(['./client/*.js', './client/*.jsx'], jsTask);
+
+    nodemon({
+        script: './server/app.js',
+        ignore: ['client/', 'scss/', 'node_modules/'],
+        ext: 'js html css'
+      });
+}; //watch
+
+//will run these all at the same time w/ parallel
+module.exports.build = gulp.parallel(sassTask, jsTask, eslintTask);
